@@ -1,7 +1,7 @@
 {
-  "name": "hello_assets",
+  "name": "ic_avatar",
   "version": "0.1.0",
-  "description": "Internet Computer starter application",
+  "description": "Avatar and displayname provider for Internet Computer",
   "keywords": [
     "Internet Computer",
     "Motoko",
