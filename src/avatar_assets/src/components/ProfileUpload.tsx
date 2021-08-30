@@ -3,17 +3,20 @@ import User from "@spectrum-icons/workflow/User";
 import React from "react";
 import { createRef } from "react";
 import styled from "styled-components";
+import { resizeImage } from "../resize";
 
 interface Props {
   defaultImage?: string;
   onChange: (value: string) => void;
 }
 
+const imageSize = 200;
+
 const Button = styled.button`
   border: 1px solid var(--spectrum-alias-text-color);
-  height: 100px;
-  width: 100px;
-  max-width: 100px;
+  height: ${imageSize}px;
+  width: ${imageSize}px;
+  max-width: ${imageSize}px;
   margin: auto;
   border-radius: 100%;
   padding: 0;
@@ -57,15 +60,29 @@ function ProfileUpload(props: Props) {
     inputRef.current?.click();
   };
 
-  const handleFile = (e: any) => {
+  const convertToBase64 = (blob: Blob) => {
+    return new Promise<string>((resolve) => {
+      var reader = new FileReader();
+      reader.onload = function () {
+        resolve(reader.result as string);
+      };
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const handleFile = async (e: any) => {
     const selectedFile = e.target.files[0];
-    var reader = new FileReader();
-    reader.readAsDataURL(selectedFile);
-    reader.onload = function (e) {
-      const result = reader.result as string;
-      setImage(result);
-      onChange(result);
+    const config = {
+      quality: 1,
+      width: imageSize,
+      height: imageSize,
     };
+    const resized = await convertToBase64(
+      await resizeImage(selectedFile, config)
+    );
+
+    setImage(resized);
+    onChange(resized);
   };
 
   const displayImage = image || defaultImage;
@@ -77,7 +94,12 @@ function ProfileUpload(props: Props) {
           {displayImage ? <img src={displayImage} /> : <User />}
         </picture>
         <Camera id="camera-icon" />
-        <input type="file" ref={inputRef} onChange={handleFile} />
+        <input
+          type="file"
+          ref={inputRef}
+          onChange={handleFile}
+          accept="image/*"
+        />
       </Button>
     </>
   );
