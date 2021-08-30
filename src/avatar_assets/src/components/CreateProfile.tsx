@@ -9,15 +9,10 @@ import toast from "react-hot-toast";
 import { emptyProfile } from "../hooks";
 import { useContext } from "react";
 import { AppContext } from "../App";
-import { useEffect } from "react";
 
 const CreateProfile = () => {
   const { setIsAuthenticated, isAuthenticated, actor, profile, updateProfile } =
     useContext(AppContext);
-
-  useEffect(() => {
-    console.log("profile", profile);
-  }, [profile, isAuthenticated]);
 
   function handleCreationError() {
     remove("profile");

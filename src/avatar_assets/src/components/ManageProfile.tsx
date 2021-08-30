@@ -10,7 +10,6 @@ import Delete from "@spectrum-icons/workflow/Delete";
 import Edit from "@spectrum-icons/workflow/Edit";
 import { remove, set } from "local-storage";
 import * as React from "react";
-import { useEffect } from "react";
 import { useContext } from "react";
 import toast from "react-hot-toast";
 import { useHistory } from "react-router-dom";
@@ -21,12 +20,29 @@ import {
 } from "../../../declarations/avatar/avatar.did";
 import { AppContext } from "../App";
 import { emptyProfile } from "../hooks";
-import { compareProfiles } from "../utils";
+import { profilesMatch } from "../utils";
 import ProfileForm from "./ProfileForm";
 
 const DetailsList = styled.dl`
   dd {
     margin-left: 0;
+  }
+`;
+
+const ProfileImage = styled.picture`
+  display: flex;
+  grid-column: span 2;
+  border-radius: 100%;
+  overflow: hidden;
+  border: 1px solid var(--spectrum-alias-text-color);
+  height: 100px;
+  width: 100px;
+  max-width: 100px;
+  margin: auto;
+  img,
+  svg {
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -45,13 +61,12 @@ function ManageProfile() {
       const result = await actor?.delete();
       toast.success("Avatar successfully deleted");
       remove("profile");
-      console.log(result);
       history.push("/");
     }
   };
 
   const compare = (updatedProfile: ProfileUpdate) => {
-    return compareProfiles(profile, updatedProfile);
+    return profilesMatch(profile, updatedProfile);
   };
 
   const submitCallback = (profile: ProfileUpdate) => {
@@ -62,23 +77,34 @@ function ManageProfile() {
     setIsEditing(false);
 
     // Handle update async
-    actor?.update(profile).then(async (profileUpdate) => {
-      if ("ok" in profileUpdate) {
-        const profileResponse = await actor.read();
-        if ("ok" in profileResponse) {
-          // Don't do anything if there is no difference.
-          if (!compare(profileResponse.ok)) return;
+    actor
+      ?.update(profile)
+      .then(async (profileUpdate) => {
+        if ("ok" in profileUpdate) {
+          const profileResponse = await actor.read();
+          if ("ok" in profileResponse) {
+            // Don't do anything if there is no difference.
+            if (compare(profileResponse.ok)) return;
 
-          updateProfile?.(profileResponse.ok);
+            updateProfile?.(profileResponse.ok);
+          } else {
+            console.error(profileResponse.err);
+            toast.error("Failed to read profile from IC");
+          }
         } else {
-          console.error(profileResponse.err);
-          toast.error("Failed to read profile from IC");
+          console.error(profileUpdate.err);
+          toast.error("Failed to save update to IC");
         }
-      } else {
-        console.error(profileUpdate.err);
+      })
+      .catch((err) => {
+        console.error(err);
         toast.error("Failed to save update to IC");
-      }
-    });
+        actor.read().then((response) => {
+          if ("ok" in response) {
+            updateProfile?.(response.ok);
+          }
+        });
+      });
   };
 
   const formProps = {
@@ -91,6 +117,7 @@ function ManageProfile() {
 
   const { name, displayName, givenName, location, about, familyName } =
     profile.bio;
+  const image = profile.image[0];
   // Greet the user
   let fallbackDisplayName = name;
   if (givenName[0]) fallbackDisplayName = givenName;
@@ -118,6 +145,9 @@ function ManageProfile() {
           </Heading>
           <DetailsList>
             <Grid columns="1fr 1fr" gap="1rem">
+              <ProfileImage id="profile-image">
+                <img src={image} />
+              </ProfileImage>
               <dd>Name:</dd>
               <dt>{name}</dt>
               <dd>Display Name:</dd>

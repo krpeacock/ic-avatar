@@ -7,14 +7,21 @@ export const idlFactory = ({ IDL }) => {
     'givenName' : IDL.Opt(IDL.Text),
     'location' : IDL.Opt(IDL.Text),
   });
-  const ProfileUpdate = IDL.Record({ 'bio' : Bio });
+  const ProfileUpdate = IDL.Record({
+    'bio' : Bio,
+    'image' : IDL.Opt(IDL.Text),
+  });
   const Error = IDL.Variant({
     'NotFound' : IDL.Null,
     'NotAuthorized' : IDL.Null,
     'AlreadyExists' : IDL.Null,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
-  const Profile = IDL.Record({ 'id' : IDL.Principal, 'bio' : Bio });
+  const Profile = IDL.Record({
+    'id' : IDL.Principal,
+    'bio' : Bio,
+    'image' : IDL.Opt(IDL.Text),
+  });
   const Result_1 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
   return IDL.Service({
     'create' : IDL.Func([ProfileUpdate], [Result], []),

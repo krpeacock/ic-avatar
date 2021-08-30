@@ -8,11 +8,16 @@ type Result =
    err: Error;
    ok;
  };
-type ProfileUpdate = record {bio: Bio;};
+type ProfileUpdate = 
+ record {
+   bio: Bio;
+   image: opt text;
+ };
 type Profile = 
  record {
    bio: Bio;
    id: principal;
+   image: opt text;
  };
 type Error = 
  variant {

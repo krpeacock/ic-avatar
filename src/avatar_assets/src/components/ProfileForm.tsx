@@ -13,6 +13,7 @@ import {
   _SERVICE,
 } from "../../../declarations/avatar/avatar.did";
 import { emptyProfile } from "../hooks";
+import ProfileUpload from "./ProfileUpload";
 
 interface Props {
   profile: ProfileUpdate;
@@ -41,10 +42,16 @@ class ProfileForm extends React.Component<Props> {
     this.setState(newState);
   }
 
+  handleImage(image: string) {
+    const newState: any = { profile: this.state.profile };
+    newState.profile.image = image ? [image] : [];
+    this.setState(newState);
+  }
+
   handleSubmit() {
     const { familyName, givenName } = this.state.profile.bio;
     const newProfile = Object.assign({}, this.state.profile);
-    let name: string = [givenName, familyName].join(" ");
+    let name: string = [givenName[0], familyName[0]].join(" ");
     newProfile.bio.name = name ? [name] : [];
 
     this.props.submitCallback(newProfile);
@@ -56,6 +63,7 @@ class ProfileForm extends React.Component<Props> {
 
     const handleChange = this.handleChange.bind(this);
     const handleSubmit = this.handleSubmit.bind(this);
+    const handleImage = this.handleImage.bind(this);
     return (
       <section>
         <Heading level={1}>Create a Profile</Heading>
@@ -65,6 +73,10 @@ class ProfileForm extends React.Component<Props> {
             handleSubmit();
           }}
         >
+          <ProfileUpload
+            onChange={handleImage}
+            defaultImage={this.state.profile.image[0]}
+          />
           <TextField
             label="First Name"
             name="givenName"
@@ -95,7 +107,9 @@ class ProfileForm extends React.Component<Props> {
             value={about[0] || ""}
             onChange={(value) => handleChange("about", value)}
           />
-          <ActionButton type="submit">Submit</ActionButton>
+          <ActionButton type="button" onPress={handleSubmit}>
+            Submit
+          </ActionButton>
         </Form>
       </section>
     );

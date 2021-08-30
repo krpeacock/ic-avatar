@@ -86,6 +86,7 @@ export function useProfile(props: UseProfileProps) {
 }
 
 export const emptyProfile: ProfileUpdate = {
+  image: [],
   bio: {
     givenName: [],
     familyName: [],

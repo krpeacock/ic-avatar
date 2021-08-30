@@ -17,10 +17,12 @@ actor Avatar {
     type Profile = {
         bio: Bio;
         id: Principal;
+        image: ?Text;
     };
     
     type ProfileUpdate = {
         bio: Bio;
+        image: ?Text;
     };
 
     type Error = {
@@ -47,6 +49,7 @@ actor Avatar {
         // Associate user profile with their principal
         let userProfile: Profile = {
             bio = profile.bio;
+            image = profile.image;
             id = callerId;
         };
 
@@ -102,6 +105,7 @@ actor Avatar {
         // Associate user profile with their principal
         let userProfile: Profile = {
             bio = profile.bio;
+            image = profile.image;
             id = callerId;
         };
 

@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { AppContext } from "../App";
 import { emptyProfile } from "../hooks";
-import { compareProfiles } from "../utils";
+import { profilesMatch } from "../utils";
 
 interface Props {}
 
@@ -14,6 +14,8 @@ function RedirectManager(props: Props) {
   if (!isAuthenticated) return <Redirect to="/" />;
   // Authenticated but no profile
   if (isAuthenticated && !profile) return <Redirect to="/create" />;
+  if (isAuthenticated && profilesMatch(profile, emptyProfile))
+    return <Redirect to="/create" />;
   // Logged in with profile
   return <Redirect to="/manage" />;
 }

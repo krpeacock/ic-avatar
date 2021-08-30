@@ -29,7 +29,7 @@ import { useEffect } from "react";
 import { clear, remove } from "local-storage";
 import { useState } from "react";
 import RedirectManager from "./components/RedirectManager";
-import { compareProfiles } from "./utils";
+import { profilesMatch } from "./utils";
 
 const Header = styled.header`
   position: relative;
@@ -93,7 +93,7 @@ const App = () => {
         if (history.location.pathname === "/") return;
         if ("ok" in result) {
           // Return if IC profile matches current
-          if (compareProfiles(profile, result.ok)) {
+          if (profilesMatch(profile, result.ok)) {
             return;
           }
           toast.success("Updated avatar from IC");

@@ -10,8 +10,12 @@ export interface Bio {
 export type Error = { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'AlreadyExists' : null };
-export interface Profile { 'id' : Principal, 'bio' : Bio }
-export interface ProfileUpdate { 'bio' : Bio }
+export interface Profile {
+  'id' : Principal,
+  'bio' : Bio,
+  'image' : [] | [string],
+}
+export interface ProfileUpdate { 'bio' : Bio, 'image' : [] | [string] }
 export type Result = { 'ok' : null } |
   { 'err' : Error };
 export type Result_1 = { 'ok' : Profile } |
