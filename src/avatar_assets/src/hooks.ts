@@ -95,4 +95,28 @@ export const emptyProfile: ProfileUpdate = {
     about: [],
     location: [],
   },
+  authorizations: [],
+  privacySettings: {
+    image: false,
+    bio: {
+      givenName: false,
+      familyName: false,
+      name: false,
+      displayName: false,
+      about: false,
+      location: false,
+    },
+    wallets: {
+      nns: false,
+      plug: false,
+      cycles: false,
+      stoic: false,
+    },
+  },
+  wallets: {
+    nns: [],
+    plug: [],
+    cycles: [],
+    stoic: [],
+  },
 };

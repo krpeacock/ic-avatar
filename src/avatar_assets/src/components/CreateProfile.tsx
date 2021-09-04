@@ -12,7 +12,7 @@ import { AppContext } from "../App";
 import { useHistory } from "react-router-dom";
 
 const CreateProfile = () => {
-  const { setIsAuthenticated, isAuthenticated, actor, profile, updateProfile } =
+  const { setIsAuthenticated, authClient, actor, profile, updateProfile } =
     useContext(AppContext);
   const history = useHistory();
 
@@ -32,10 +32,12 @@ const CreateProfile = () => {
     toast.success("Profile created");
     history.push("/manage");
 
+    const principal = authClient?.getIdentity().getPrincipal();
+    if (!principal) return;
     // Handle creation and verification async
     actor?.create(profile).then(async (createResponse) => {
       if ("ok" in createResponse) {
-        const profileResponse = await actor.read();
+        const profileResponse = await actor.read(principal);
         if ("ok" in profileResponse) {
           // Do nothing, we already updated
         } else {

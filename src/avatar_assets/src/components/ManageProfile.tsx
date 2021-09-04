@@ -48,8 +48,8 @@ const ProfileImage = styled.picture`
 
 function ManageProfile() {
   const [isEditing, setIsEditing] = React.useState(false);
-  const { actor, profile, isAuthenticated, updateProfile } =
-    useContext(AppContext);
+  const { actor, profile, authClient, updateProfile } = useContext(AppContext);
+
   const history = useHistory();
 
   const deleteProfile = async () => {
@@ -65,10 +65,6 @@ function ManageProfile() {
     }
   };
 
-  const compare = (updatedProfile: ProfileUpdate) => {
-    return profilesMatch(profile, updatedProfile);
-  };
-
   const submitCallback = (profile: ProfileUpdate) => {
     // Optimistically update
     updateProfile?.(profile);
@@ -76,18 +72,20 @@ function ManageProfile() {
     toast.success("Avatar updated!");
     setIsEditing(false);
 
+    const principal = authClient?.getIdentity().getPrincipal();
+    if (!principal) return;
     // Handle update async
     actor
       ?.update(profile)
       .then(async (profileUpdate) => {
         if ("ok" in profileUpdate) {
-          const profileResponse = await actor.read();
-          if ("ok" in profileResponse) {
+          const profileResponse = await actor.read(principal);
+          if ("ok" in profileResponse && "full" in profileResponse.ok) {
             // Don't do anything if there is no difference.
-            if (compare(profileResponse.ok)) return;
+            if (profilesMatch(profileResponse.ok.full, profile)) return;
 
-            updateProfile?.(profileResponse.ok);
-          } else {
+            updateProfile?.(profileResponse.ok.full);
+          } else if ("err" in profileResponse) {
             console.error(profileResponse.err);
             toast.error("Failed to read profile from IC");
           }
@@ -99,9 +97,9 @@ function ManageProfile() {
       .catch((err) => {
         console.error(err);
         toast.error("Failed to save update to IC");
-        actor.read().then((response) => {
-          if ("ok" in response) {
-            updateProfile?.(response.ok);
+        actor.read(principal).then((response) => {
+          if ("ok" in response && "full" in response.ok) {
+            updateProfile?.(response.ok.full);
           }
         });
       });

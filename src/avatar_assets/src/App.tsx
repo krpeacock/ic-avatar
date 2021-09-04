@@ -26,10 +26,11 @@ import { emptyProfile, useAuthClient, useProfile } from "./hooks";
 import { AuthClient } from "@dfinity/auth-client";
 import { ActorSubclass } from "@dfinity/agent";
 import { useEffect } from "react";
-import { clear, remove } from "local-storage";
-import { useState } from "react";
+import { remove } from "local-storage";
 import RedirectManager from "./components/RedirectManager";
+import { createAuthorizationRequestUrl } from "./authentication";
 import { profilesMatch } from "./utils";
+import AuthorizationHandler from "./components/AuthorizationHandler";
 
 const Header = styled.header`
   position: relative;
@@ -84,20 +85,22 @@ const App = () => {
 
   useEffect(() => {
     if (history.location.pathname === "/") return;
-
-    if (actor) {
+    const principal = identity?.getPrincipal();
+    if (actor && principal) {
       if (!profile) {
         toast.loading("Checking the IC for an existing avatar");
       }
-      actor.read().then((result) => {
+      actor.read(principal).then((result) => {
         if (history.location.pathname === "/") return;
         if ("ok" in result) {
           // Return if IC profile matches current
-          if (profilesMatch(profile, result.ok)) {
-            return;
+          if ("full" in result.ok) {
+            if (profilesMatch(profile, result.ok.full)) {
+              return;
+            }
+            toast.success("Updated avatar from IC");
+            updateProfile(result.ok.full);
           }
-          toast.success("Updated avatar from IC");
-          updateProfile(result.ok);
         } else {
           if ("NotAuthorized" in result.err) {
             // clear local delegation and log in
@@ -117,6 +120,18 @@ const App = () => {
       });
     }
   }, [actor]);
+
+  const testAuth = () => {
+    const principal = authClient?.getIdentity().getPrincipal();
+    if (!principal) return;
+    const url = createAuthorizationRequestUrl({
+      targetUri: "http://localhost:3000/manage",
+      principals: [principal],
+      scope: ["read"],
+      redirectUri: window.location.origin,
+    });
+    window.location.assign(url.toString());
+  };
 
   if (!authClient) return null;
 
@@ -147,6 +162,9 @@ const App = () => {
               <RedirectManager />
               <Header>
                 <Route path="/manage">
+                  <ActionButton id="test-auth" onPress={testAuth}>
+                    Test Auth
+                  </ActionButton>
                   <ActionButton id="logout" onPress={logout}>
                     Log out
                   </ActionButton>
@@ -169,6 +187,7 @@ const App = () => {
                     </Route>
                     <Route path="/manage" exact>
                       <ManageProfile />
+                      <AuthorizationHandler />
                     </Route>
                     <Route path="/create" exact>
                       <CreateProfile />

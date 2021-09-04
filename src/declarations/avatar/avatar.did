@@ -1,3 +1,10 @@
+type Wallets = 
+ record {
+   cycles: opt text;
+   nns: opt text;
+   plug: opt text;
+   stoic: opt text;
+ };
 type Result_1 = 
  variant {
    err: Error;
@@ -10,14 +17,49 @@ type Result =
  };
 type ProfileUpdate = 
  record {
+   authorizations: vec Authorization;
    bio: Bio;
    image: opt text;
+   privacySettings: PrivacySettings;
+   wallets: Wallets;
  };
 type Profile = 
+ variant {
+   full: FullProfile;
+   partial: record {
+              bio: Bio;
+              id: principal;
+              image: opt text;
+              wallets: Wallets;
+            };
+ };
+type PrivacySettings = 
  record {
+   bio:
+    record {
+      about: bool;
+      displayName: bool;
+      familyName: bool;
+      givenName: bool;
+      location: bool;
+      name: bool;
+    };
+   image: bool;
+   wallets: record {
+              cycles: bool;
+              nns: bool;
+              plug: bool;
+              stoic: bool;
+            };
+ };
+type FullProfile = 
+ record {
+   authorizations: vec Authorization;
    bio: Bio;
    id: principal;
    image: opt text;
+   privacySettings: PrivacySettings;
+   wallets: Wallets;
  };
 type Error = 
  variant {
@@ -34,9 +76,22 @@ type Bio =
    location: opt text;
    name: opt text;
  };
+type Authorization = 
+ record {
+   id: principal;
+   scope: vec AUTHORIZATION_SCOPE;
+ };
+type AUTHORIZATION_SCOPE = 
+ variant {
+   read_all;
+   read_bio;
+   read_image;
+   read_wallets;
+ };
 service : {
+  authorize: (Authorization) -> (Result);
   create: (ProfileUpdate) -> (Result);
   delete: () -> (Result);
-  read: () -> (Result_1);
+  read: (principal) -> (Result_1);
   update: (ProfileUpdate) -> (Result);
 }
