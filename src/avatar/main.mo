@@ -5,8 +5,8 @@ import Nat "mo:base/Nat";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import T "mo:base/ExperimentalCycles";
 import Trie "mo:base/Trie";
+import Debug "mo:base/Debug";
 
 actor Avatar {
     type Bio = {
@@ -98,6 +98,7 @@ actor Avatar {
     type Authorization = {
         id: Principal;
         scope: [AUTHORIZATION_SCOPE];
+        url: Text;
     };
 
     type AUTHORIZATION_SCOPE = {
@@ -156,14 +157,9 @@ actor Avatar {
     };
 
     // Read profile
-    public shared(msg) func read (id: Principal) : async Result.Result<Profile, Error> {
+    public query(msg) func read (id: Principal) : async Result.Result<Profile, Error> {
         // Get caller principal
         let callerId = msg.caller;
-
-        // Reject AnonymousIdentity
-        if(Principal.toText(callerId) == "2vxsx-fae") {
-            return #err(#NotAuthorized);
-        };
 
         let result = Trie.find(
             profiles,           //Target Trie
@@ -309,7 +305,7 @@ actor Avatar {
         };
     };
 
-    public shared(msg) func authorize(authorization: Authorization)  : async Result.Result<(), Error>{
+    public shared(msg) func authorize(authorizations: [Authorization])  : async Result.Result<(), Error>{
         let callerId = msg.caller;
 
         // Reject AnonymousIdentity
@@ -325,11 +321,12 @@ actor Avatar {
 
         switch(result){
             case(null) {
-                #err(#NotFound);
+                return #err(#NotFound);
             };
             case(? v){
-                var existing = v.authorizations;
-                let authorizations: [Authorization] = Array.append<Authorization>(v.authorizations, [authorization]);
+                let joinedAuthorizations = Array.append<Authorization>(v.authorizations, authorizations);
+
+                Debug.print(Nat.toText(Iter.size(Array.vals(joinedAuthorizations))));
 
                 let authorizedProfile: FullProfile = {
                     id= callerId;
@@ -337,7 +334,7 @@ actor Avatar {
                     wallets= v.wallets;
                     image= v.image;
                     privacySettings= v.privacySettings;
-                    authorizations=authorizations;
+                    authorizations=joinedAuthorizations;
                 };
 
                 profiles := Trie.replace(
@@ -346,7 +343,7 @@ actor Avatar {
                     Principal.equal,    // Equality checker
                     ?authorizedProfile
                 ).0;
-                #ok(());
+                return #ok(());
             }
         };
     };

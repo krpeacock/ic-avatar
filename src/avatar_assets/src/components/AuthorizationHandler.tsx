@@ -11,7 +11,13 @@ import {
 import React, { useContext } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { useHistory } from "react-router-dom";
+import {
+  Authorization,
+  AUTHORIZATION_SCOPE,
+  ProfileUpdate,
+} from "../../../declarations/avatar/avatar.did";
 import { AppContext } from "../App";
 import {
   AuthorizationOptions,
@@ -22,13 +28,14 @@ import {
 interface Props {}
 
 function AuthorizationHandler(props: Props) {
-  const { isAuthenticated, authClient } = useContext(AppContext);
+  const { isAuthenticated, authClient, actor } = useContext(AppContext);
   const [authorizationRequest, setAuthorizationRequest] =
     useState<AuthorizationOptions | null>(null);
-  const history = useHistory();
   const {} = props;
 
   const triggerRef = React.createRef<any>();
+
+  console.log(authClient?.getIdentity().getPrincipal());
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -41,14 +48,54 @@ function AuthorizationHandler(props: Props) {
     }
   }, []);
 
-  function approve() {
-    if (authorizationRequest) {
-      const redirect = createAuthorizationResponseUrl({
-        ok: true,
-        redirectUri: authorizationRequest.redirectUri,
-        message: authClient?.getIdentity().getPrincipal().toText(),
+  function _mapScope(scope: string[]): AUTHORIZATION_SCOPE[] {
+    const options = ["read_wallets", "read_all", "read_bio", "read_image"];
+    const scopes: AUTHORIZATION_SCOPE[] = scope
+      .filter((v) => {
+        return options.includes(v);
+      })
+      .map((v) => {
+        let obj = {};
+        return Object.defineProperty(obj, v, {
+          value: null,
+          writable: true,
+          enumerable: true,
+        }) as AUTHORIZATION_SCOPE;
       });
-      window.location.assign(redirect.toString());
+    return scopes;
+  }
+
+  async function approve() {
+    if (actor && authorizationRequest) {
+      const scope = _mapScope(authorizationRequest.scope);
+
+      if (!authorizationRequest.principals.length || !scope.length) {
+        toast.error("Malformed authorization url");
+        return;
+      }
+      const authorizations = authorizationRequest.principals.map(
+        (principal) => {
+          const authorization: Authorization = {
+            id: principal,
+            scope,
+            url: authorizationRequest.redirectUri,
+          };
+          return authorization;
+        }
+      );
+
+      console.log(authorizations);
+      const result = await actor.authorize(authorizations);
+      if ("ok" in result) {
+        const redirect = createAuthorizationResponseUrl({
+          ok: true,
+          redirectUri: authorizationRequest.redirectUri,
+          message: authClient?.getIdentity().getPrincipal().toText(),
+        });
+        window.location.assign(redirect.toString());
+      } else {
+        toast.error("Error while authorizing: " + Object.keys(result.err)[0]);
+      }
     }
   }
 

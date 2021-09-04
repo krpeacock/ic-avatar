@@ -7,6 +7,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const Authorization = IDL.Record({
     'id' : IDL.Principal,
+    'url' : IDL.Text,
     'scope' : IDL.Vec(AUTHORIZATION_SCOPE),
   });
   const Error = IDL.Variant({
@@ -72,10 +73,10 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result_1 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
   return IDL.Service({
-    'authorize' : IDL.Func([Authorization], [Result], []),
+    'authorize' : IDL.Func([IDL.Vec(Authorization)], [Result], []),
     'create' : IDL.Func([ProfileUpdate], [Result], []),
     'delete' : IDL.Func([], [Result], []),
-    'read' : IDL.Func([IDL.Principal], [Result_1], []),
+    'read' : IDL.Func([IDL.Principal], [Result_1], ['query']),
     'update' : IDL.Func([ProfileUpdate], [Result], []),
   });
 };

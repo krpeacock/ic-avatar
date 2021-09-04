@@ -24,7 +24,7 @@ import CreateProfile from "./components/CreateProfile";
 import ManageProfile from "./components/ManageProfile";
 import { emptyProfile, useAuthClient, useProfile } from "./hooks";
 import { AuthClient } from "@dfinity/auth-client";
-import { ActorSubclass } from "@dfinity/agent";
+import { ActorSubclass, AnonymousIdentity } from "@dfinity/agent";
 import { useEffect } from "react";
 import { remove } from "local-storage";
 import RedirectManager from "./components/RedirectManager";
@@ -82,7 +82,6 @@ const App = () => {
   } = useAuthClient();
   const identity = authClient?.getIdentity();
   const { profile, updateProfile } = useProfile({ identity });
-
   useEffect(() => {
     if (history.location.pathname === "/") return;
     const principal = identity?.getPrincipal();
@@ -122,12 +121,12 @@ const App = () => {
   }, [actor]);
 
   const testAuth = () => {
-    const principal = authClient?.getIdentity().getPrincipal();
+    const principal = new AnonymousIdentity().getPrincipal();
     if (!principal) return;
     const url = createAuthorizationRequestUrl({
       targetUri: "http://localhost:3000/manage",
       principals: [principal],
-      scope: ["read"],
+      scope: ["read_all"],
       redirectUri: window.location.origin,
     });
     window.location.assign(url.toString());

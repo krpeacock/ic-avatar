@@ -80,6 +80,7 @@ type Authorization =
  record {
    id: principal;
    scope: vec AUTHORIZATION_SCOPE;
+   url: text;
  };
 type AUTHORIZATION_SCOPE = 
  variant {
@@ -89,9 +90,9 @@ type AUTHORIZATION_SCOPE =
    read_wallets;
  };
 service : {
-  authorize: (Authorization) -> (Result);
+  authorize: (vec Authorization) -> (Result);
   create: (ProfileUpdate) -> (Result);
   delete: () -> (Result);
-  read: (principal) -> (Result_1);
+  read: (principal) -> (Result_1) query;
   update: (ProfileUpdate) -> (Result);
 }

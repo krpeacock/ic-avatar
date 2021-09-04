@@ -5,6 +5,7 @@ export type AUTHORIZATION_SCOPE = { 'read_wallets' : null } |
   { 'read_image' : null };
 export interface Authorization {
   'id' : Principal,
+  'url' : string,
   'scope' : Array<AUTHORIZATION_SCOPE>,
 }
 export interface Bio {
@@ -70,7 +71,7 @@ export interface Wallets {
   'stoic' : [] | [string],
 }
 export interface _SERVICE {
-  'authorize' : (arg_0: Authorization) => Promise<Result>,
+  'authorize' : (arg_0: Array<Authorization>) => Promise<Result>,
   'create' : (arg_0: ProfileUpdate) => Promise<Result>,
   'delete' : () => Promise<Result>,
   'read' : (arg_0: Principal) => Promise<Result_1>,
