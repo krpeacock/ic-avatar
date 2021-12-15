@@ -1,4 +1,6 @@
-# IC Avatar
+# IC Avatar Example Project
+
+This codebase is an example of how to build an Internet Computer dapp using Internet Identity to authenticate users.
 
 - [Quick Start](https://sdk.dfinity.org/docs/quickstart/quickstart-intro.html)
 - [SDK Developer Tools](https://sdk.dfinity.org/docs/developers-guide/sdk-guide.html)
