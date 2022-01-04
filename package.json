@@ -16,9 +16,10 @@
     "generate:types": "dfx generate avatar"
   },
   "devDependencies": {
-    "@dfinity/agent": "0.10.0-beta.1",
-    "@dfinity/candid": "0.10.0-beta.1",
-    "@dfinity/principal": "0.10.0-beta.1",
+    "@dfinity/agent": "0.10.2",
+    "@dfinity/candid": "0.10.2",
+    "@dfinity/principal": "0.10.2",
+    "@dfinity/auth-client": "^0.10.2",
     "@svgr/webpack": "^5.5.0",
     "@types/react": "^17.0.18",
     "@types/react-dom": "^17.0.9",
@@ -49,8 +50,6 @@
   ],
   "dependencies": {
     "@adobe/react-spectrum": "^3.13.0",
-    "@dfinity/auth-client": "^0.10.0-beta.1",
-    "@silvia-odwyer/photon": "^0.3.11",
     "@spectrum-icons/workflow": "^3.2.1",
     "@types/react-router-dom": "^5.1.8",
     "browser-image-resizer": "^2.2.0",

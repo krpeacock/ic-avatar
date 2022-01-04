@@ -177,6 +177,27 @@ shared ({caller = creator}) actor class () {
             Principal.equal           // Equality Checker
         );
 
+        switch(profile.image){
+            case null {};
+            case (? v){
+                var fileName = "/images/";
+                fileName := Text.concat(fileName, Principal.toText(callerId));
+                fileName := Text.concat(fileName, "/");
+                fileName := Text.concat(fileName, v.fileName);
+                let sha256 : ?Blob = null;
+
+                let deleteResult = delete_asset({key = fileName});
+
+                let storeResult = await store({
+                    key = fileName;
+                    content_type = v.filetype;
+                    content_encoding = "identity";
+                    content = v.data;
+                    sha256 = sha256;
+                });
+            };
+        };
+
         switch (result){
             // Do not allow updates to profiles that haven't been created yet
             case null {
