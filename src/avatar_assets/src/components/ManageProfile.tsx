@@ -20,7 +20,7 @@ import {
 } from "../../../declarations/avatar/avatar.did";
 import { AppContext } from "../App";
 import { emptyProfile } from "../hooks";
-import { profilesMatch } from "../utils";
+import { convertToBase64, profilesMatch } from "../utils";
 import ProfileForm from "./ProfileForm";
 
 const DetailsList = styled.dl`
@@ -118,6 +118,10 @@ function ManageProfile() {
   const { name, displayName, givenName, location, about, familyName } =
     profile.bio;
   const image = profile.image[0];
+  const imageString = image
+    ? convertToBase64(new Blob([new Uint8Array(image.data)]))
+    : "";
+
   // Greet the user
   let fallbackDisplayName = name;
   if (givenName[0]) fallbackDisplayName = givenName;
@@ -146,7 +150,10 @@ function ManageProfile() {
           <DetailsList>
             <Grid columns="1fr 1fr" gap="1rem">
               <ProfileImage id="profile-image">
-                <img src={image} />
+                {async () => {
+                  const string = await imageString;
+                  return <img src={string} />;
+                }}
               </ProfileImage>
               <dd>Name:</dd>
               <dt>{name}</dt>

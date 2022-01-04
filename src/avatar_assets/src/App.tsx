@@ -82,6 +82,8 @@ const App = () => {
   const identity = authClient?.getIdentity();
   const { profile, updateProfile } = useProfile({ identity });
 
+  console.log(identity?.getPrincipal().toText());
+
   useEffect(() => {
     if (history.location.pathname === "/") return;
 

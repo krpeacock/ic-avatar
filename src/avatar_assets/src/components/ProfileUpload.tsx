@@ -4,9 +4,10 @@ import React from "react";
 import { createRef } from "react";
 import styled from "styled-components";
 import { resizeImage } from "../resize";
+import { Image } from "../../../declarations/avatar/avatar.did";
+import { convertToBase64 } from "../utils";
 
 interface Props {
-  defaultImage?: string;
   onChange: (value: string) => void;
 }
 
@@ -53,47 +54,43 @@ const Button = styled.button`
 `;
 
 function ProfileUpload(props: Props) {
-  const { defaultImage, onChange } = props;
-  const [image, setImage] = React.useState("");
+  const { onChange } = props;
+  const [image, setImage] = React.useState<Image>();
+  const [preview, setPreview] = React.useState("");
   const inputRef = createRef<HTMLInputElement>();
 
   const handleClick = () => {
     inputRef.current?.click();
   };
 
-  const convertToBase64 = (blob: Blob) => {
-    return new Promise<string>((resolve) => {
-      var reader = new FileReader();
-      reader.onload = function () {
-        resolve(reader.result as string);
-      };
-      reader.readAsDataURL(blob);
-    });
-  };
-
   const handleFile = async (e: any) => {
     const selectedFile = e.target.files[0];
+    const filetype = selectedFile.type;
     const config = {
       quality: 1,
       width: imageSize,
       height: imageSize,
     };
-    const resized = await convertToBase64(
+    const resized = (await resizeImage(selectedFile, config)) as Blob;
+    const resizedString = await convertToBase64(
       await resizeImage(selectedFile, config)
     );
 
-    setImage(resized);
-    onChange(resized);
-  };
+    const data = [...new Uint8Array(await resized.arrayBuffer())];
 
-  const displayImage = image || defaultImage;
+    setPreview(resizedString);
+    setImage({
+      fileName: `profile.${filetype.split("/").pop()}`,
+      filetype,
+      data,
+    });
+    onChange(resizedString);
+  };
 
   return (
     <>
       <Button onClick={handleClick} type="button">
-        <picture>
-          {displayImage ? <img src={displayImage} /> : <User />}
-        </picture>
+        <picture>{preview ? <img src={preview} /> : <User />}</picture>
         <Camera id="camera-icon" />
         <input
           type="file"

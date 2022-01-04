@@ -12,3 +12,13 @@ export function profilesMatch(
     return false;
   }
 }
+
+export const convertToBase64 = (blob: Blob) => {
+  return new Promise<string>((resolve) => {
+    var reader = new FileReader();
+    reader.onload = function () {
+      resolve(reader.result as string);
+    };
+    reader.readAsDataURL(blob);
+  });
+};

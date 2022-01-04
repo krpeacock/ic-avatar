@@ -11,13 +11,37 @@ type Result =
 type ProfileUpdate = 
  record {
    bio: Bio;
-   image: opt text;
+   image: opt Image;
  };
 type Profile = 
  record {
    bio: Bio;
    id: principal;
-   image: opt text;
+   image: opt Image;
+ };
+type Image = 
+ record {
+   data: blob;
+   fileName: text;
+   filetype: text;
+ };
+type HttpResponse = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   status_code: nat16;
+ };
+type HttpRequest = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   method: text;
+   url: text;
+ };
+type HeaderField = 
+ record {
+   text;
+   text;
  };
 type Error = 
  variant {
@@ -37,6 +61,7 @@ type Bio =
 service : {
   create: (ProfileUpdate) -> (Result);
   delete: () -> (Result);
+  http_request: (HttpRequest) -> (HttpResponse) query;
   read: () -> (Result_1);
   update: (ProfileUpdate) -> (Result);
 }

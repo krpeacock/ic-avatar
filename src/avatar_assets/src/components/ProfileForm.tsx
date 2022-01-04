@@ -7,6 +7,7 @@ import {
 } from "@adobe/react-spectrum";
 import { ActorSubclass } from "@dfinity/agent";
 import React from "react";
+import { canisterId } from "../../../declarations/avatar";
 import {
   Bio,
   ProfileUpdate,
@@ -73,10 +74,7 @@ class ProfileForm extends React.Component<Props> {
             handleSubmit();
           }}
         >
-          <ProfileUpload
-            onChange={handleImage}
-            defaultImage={this.state.profile.image[0]}
-          />
+          <ProfileUpload onChange={handleImage} />
           <TextField
             label="First Name"
             name="givenName"
