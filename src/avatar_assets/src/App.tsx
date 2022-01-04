@@ -26,10 +26,9 @@ import { emptyProfile, useAuthClient, useProfile } from "./hooks";
 import { AuthClient } from "@dfinity/auth-client";
 import { ActorSubclass } from "@dfinity/agent";
 import { useEffect } from "react";
-import { clear, remove } from "local-storage";
-import { useState } from "react";
+import { remove } from "local-storage";
 import RedirectManager from "./components/RedirectManager";
-import { profilesMatch } from "./utils";
+import { checkDelegation, profilesMatch } from "./utils";
 
 const Header = styled.header`
   position: relative;
@@ -69,6 +68,9 @@ export const AppContext = React.createContext<{
 });
 
 const App = () => {
+  const delegationExpired = checkDelegation();
+  if (delegationExpired) localStorage.clear();
+
   const history = createBrowserHistory();
   const {
     authClient,
@@ -85,6 +87,7 @@ const App = () => {
   console.log(identity?.getPrincipal().toText());
 
   useEffect(() => {
+    if (delegationExpired) history.replace("/");
     if (history.location.pathname === "/") return;
 
     if (actor) {

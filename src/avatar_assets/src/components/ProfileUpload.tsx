@@ -1,14 +1,16 @@
 import Camera from "@spectrum-icons/workflow/Camera";
 import User from "@spectrum-icons/workflow/User";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { createRef } from "react";
 import styled from "styled-components";
 import { resizeImage } from "../resize";
 import { Image } from "../../../declarations/avatar/avatar.did";
-import { convertToBase64 } from "../utils";
+import { convertToBase64, getImageString } from "../utils";
+import { AppContext } from "../App";
 
 interface Props {
   onChange: (value: Image) => void;
+  image?: Image;
 }
 
 const imageSize = 200;
@@ -54,9 +56,16 @@ const Button = styled.button`
 `;
 
 function ProfileUpload(props: Props) {
-  const { onChange } = props;
+  const { onChange, image } = props;
+  const { authClient } = useContext(AppContext);
   const [preview, setPreview] = React.useState("");
   const inputRef = createRef<HTMLInputElement>();
+
+  useEffect(() => {
+    if (image && authClient) {
+      setPreview(getImageString(image, authClient));
+    }
+  }, [image, authClient]);
 
   const handleClick = () => {
     inputRef.current?.click();

@@ -62,6 +62,7 @@ export function useAuthClient(props?: UseAuthClientProps) {
 type UseProfileProps = {
   identity?: Identity;
 };
+
 export function useProfile(props: UseProfileProps) {
   const { identity } = props;
   const [profile, setProfile] = useState<ProfileUpdate>();

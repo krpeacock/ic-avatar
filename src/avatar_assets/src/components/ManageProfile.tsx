@@ -5,6 +5,7 @@ import {
   Heading,
   Text,
 } from "@adobe/react-spectrum";
+import { AuthClient } from "@dfinity/auth-client";
 import Cancel from "@spectrum-icons/workflow/Cancel";
 import Delete from "@spectrum-icons/workflow/Delete";
 import Edit from "@spectrum-icons/workflow/Edit";
@@ -14,14 +15,15 @@ import { useContext } from "react";
 import toast from "react-hot-toast";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { avatar } from "../../../declarations/avatar";
+import { avatar, canisterId } from "../../../declarations/avatar";
 import {
   ProfileUpdate,
+  Profile,
   _SERVICE,
 } from "../../../declarations/avatar/avatar.did";
 import { AppContext } from "../App";
 import { emptyProfile } from "../hooks";
-import { convertToBase64, profilesMatch } from "../utils";
+import { convertToBase64, getImageString, profilesMatch } from "../utils";
 import ProfileForm from "./ProfileForm";
 
 const DetailsList = styled.dl`
@@ -30,28 +32,29 @@ const DetailsList = styled.dl`
   }
 `;
 
-const ProfileImage = styled.picture`
+const ProfileImage = styled.a`
   display: flex;
   grid-column: span 2;
-  border-radius: 100%;
-  overflow: hidden;
-  border: 1px solid var(--spectrum-alias-text-color);
-  height: 100px;
-  width: 100px;
-  max-width: 100px;
-  margin: auto;
-  img,
-  svg {
-    width: 100%;
-    height: 100%;
+  picture {
+    border-radius: 100%;
+    overflow: hidden;
+    border: 1px solid var(--spectrum-alias-text-color);
+
+    height: 100px;
+    width: 100px;
+    max-width: 100px;
+    margin: auto;
+    img,
+    svg {
+      width: 100%;
+      height: 100%;
+    }
   }
 `;
 
 function ManageProfile() {
   const [isEditing, setIsEditing] = React.useState(false);
-  const [preview, setPreview] = React.useState("");
-  const { actor, profile, isAuthenticated, updateProfile } =
-    useContext(AppContext);
+  const { actor, profile, authClient, updateProfile } = useContext(AppContext);
   const history = useHistory();
 
   const deleteProfile = async () => {
@@ -119,23 +122,16 @@ function ManageProfile() {
 
   const { name, displayName, givenName, location, about, familyName } =
     profile.bio;
-  const image = profile.image[0];
-  React.useEffect(() => {
-    if (image) {
-      convertToBase64(new Blob([new Uint8Array(image.data)])).then((result) => {
-        setPreview(result);
-      });
-    }
-  }, [image]);
-
-  avatar.list({}).then((result) => {
-    console.log(result);
-  });
 
   // Greet the user
   let fallbackDisplayName = name;
   if (givenName[0]) fallbackDisplayName = givenName;
   if (displayName[0]) fallbackDisplayName = displayName;
+
+  const image = profile.image[0];
+
+  const imageString =
+    image && authClient ? getImageString(image, authClient) : "";
 
   return (
     <>
@@ -159,8 +155,10 @@ function ManageProfile() {
           </Heading>
           <DetailsList>
             <Grid columns="1fr 1fr" gap="1rem">
-              <ProfileImage id="profile-image">
-                <img src={preview} />;
+              <ProfileImage href={imageString}>
+                <picture id="profile-image">
+                  <img src={imageString} />;
+                </picture>
               </ProfileImage>
               <dd>Name:</dd>
               <dt>{name}</dt>

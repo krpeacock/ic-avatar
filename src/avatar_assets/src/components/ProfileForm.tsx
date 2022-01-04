@@ -75,34 +75,42 @@ class ProfileForm extends React.Component<Props> {
             handleSubmit();
           }}
         >
-          <ProfileUpload onChange={handleImage} />
+          <ProfileUpload
+            onChange={handleImage}
+            image={this.state.profile.image[0]}
+          />
           <TextField
             label="First Name"
             name="givenName"
+            autoComplete="given-name"
             value={givenName[0] || ""}
             onChange={(value) => handleChange("givenName", value)}
           />
           <TextField
             label="Last Name"
             name="familyName"
+            autoComplete="family-name"
             value={familyName[0] || ""}
             onChange={(value) => handleChange("familyName", value)}
           />
           <TextField
             label="Profile Name"
             name="displayName"
+            autoComplete="nickname"
             value={displayName[0] || ""}
             onChange={(value) => handleChange("displayName", value)}
           />
           <TextField
             label="Location"
             name="location"
+            autoComplete="off"
             value={location[0] || ""}
             onChange={(value) => handleChange("location", value)}
           />
           <TextArea
             label="About"
             name="about"
+            autoComplete="off"
             value={about[0] || ""}
             onChange={(value) => handleChange("about", value)}
           />
