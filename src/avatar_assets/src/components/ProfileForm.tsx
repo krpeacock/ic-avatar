@@ -10,6 +10,7 @@ import React from "react";
 import { canisterId } from "../../../declarations/avatar";
 import {
   Bio,
+  Image,
   ProfileUpdate,
   _SERVICE,
 } from "../../../declarations/avatar/avatar.did";
@@ -43,7 +44,7 @@ class ProfileForm extends React.Component<Props> {
     this.setState(newState);
   }
 
-  handleImage(image: string) {
+  handleImage(image: Image) {
     const newState: any = { profile: this.state.profile };
     newState.profile.image = image ? [image] : [];
     this.setState(newState);

@@ -1,23 +1,28 @@
+import A "Asset";
+import Array "mo:base/Array";
+import B "Batch";
 import Blob "mo:base/Blob";
+import Buffer "mo:base/Buffer";
+import C "Chunk";
 import CertifiedData "mo:base/CertifiedData";
+import Char "mo:base/Char";
+import Debug "mo:base/Debug";
+import Error "mo:base/Error";
 import Hash "mo:base/Hash";
+import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
+import Option "mo:base/Option";
+import Prim "mo:prim";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Text "mo:base/Text";
-import Trie "mo:base/Trie";
-
-// Asset Management
-import Prim "mo:prim";
-
-import A "Asset";
-import B "Batch";
-import C "Chunk";
 import T "Types";
+import Text "mo:base/Text";
+import Time "mo:base/Time";
+import Trie "mo:base/Trie";
 import U "Utils";
 
-actor Avatar {
+shared ({caller = creator}) actor class () {
     type Bio = {
         givenName: ?Text;
         familyName: ?Text;
@@ -38,6 +43,12 @@ actor Avatar {
         image: ?Image;
     };
 
+    type Image = {
+        fileName: Text;
+        data: Blob;
+        filetype: Text;
+    };
+
     type Error = {
         #NotFound;
         #AlreadyExists;
@@ -46,6 +57,8 @@ actor Avatar {
 
     // Application state
     stable var profiles : Trie.Trie<Principal, Profile> = Trie.empty();
+
+    stable var authorized: [Principal] = [creator];
 
     // Asset management
     stable var stableAssets : [(T.Key, A.StableAsset)] = [];
@@ -97,20 +110,15 @@ actor Avatar {
                 fileName := Text.concat(fileName, Principal.toText(callerId));
                 fileName := Text.concat(fileName, "/");
                 fileName := Text.concat(fileName, v.fileName);
+                let sha256 : ?Blob = null;
 
-                await store({
-                    key: fileName;
-                    content_type: v.;
-                    content_encoding: Text;
-                    content: Blob;
-                    sha256: ?Blob;
-                })
-                images := Trie.putFresh(
-                    images,
-                    keyText(fileName),
-                    Text.equal,
-                    v
-                );
+                let storeResult = await store({
+                    key = fileName;
+                    content_type = v.filetype;
+                    content_encoding = "identity";
+                    content = v.data;
+                    sha256 = sha256;
+                });
             };
         };
 
@@ -233,17 +241,13 @@ actor Avatar {
     // Store a content encoding for an asset.  Does not remove other content encodings.
     // If the contents exceed the message ingress limit,
     // use create_batch(), create_chunk(), commit_batch() instead.
-    public shared ({ caller }) func store(arg:{
+    private func store(arg:{
         key: T.Key;
         content_type: Text;
         content_encoding: Text;
         content: Blob;
         sha256: ?Blob;
     }) : async () {
-        if (isSafe(caller) == false) {
-            throw Error.reject("not authorized");
-        };
-
         let batch = batches.create();
         let chunkId = chunks.create(batch, arg.content);
 

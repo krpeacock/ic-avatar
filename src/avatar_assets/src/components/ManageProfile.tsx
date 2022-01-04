@@ -14,6 +14,7 @@ import { useContext } from "react";
 import toast from "react-hot-toast";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { avatar } from "../../../declarations/avatar";
 import {
   ProfileUpdate,
   _SERVICE,
@@ -48,6 +49,7 @@ const ProfileImage = styled.picture`
 
 function ManageProfile() {
   const [isEditing, setIsEditing] = React.useState(false);
+  const [preview, setPreview] = React.useState("");
   const { actor, profile, isAuthenticated, updateProfile } =
     useContext(AppContext);
   const history = useHistory();
@@ -118,9 +120,17 @@ function ManageProfile() {
   const { name, displayName, givenName, location, about, familyName } =
     profile.bio;
   const image = profile.image[0];
-  const imageString = image
-    ? convertToBase64(new Blob([new Uint8Array(image.data)]))
-    : "";
+  React.useEffect(() => {
+    if (image) {
+      convertToBase64(new Blob([new Uint8Array(image.data)])).then((result) => {
+        setPreview(result);
+      });
+    }
+  }, [image]);
+
+  avatar.list({}).then((result) => {
+    console.log(result);
+  });
 
   // Greet the user
   let fallbackDisplayName = name;
@@ -150,10 +160,7 @@ function ManageProfile() {
           <DetailsList>
             <Grid columns="1fr 1fr" gap="1rem">
               <ProfileImage id="profile-image">
-                {async () => {
-                  const string = await imageString;
-                  return <img src={string} />;
-                }}
+                <img src={preview} />;
               </ProfileImage>
               <dd>Name:</dd>
               <dt>{name}</dt>

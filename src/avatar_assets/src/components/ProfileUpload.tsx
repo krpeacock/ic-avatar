@@ -8,7 +8,7 @@ import { Image } from "../../../declarations/avatar/avatar.did";
 import { convertToBase64 } from "../utils";
 
 interface Props {
-  onChange: (value: string) => void;
+  onChange: (value: Image) => void;
 }
 
 const imageSize = 200;
@@ -55,7 +55,6 @@ const Button = styled.button`
 
 function ProfileUpload(props: Props) {
   const { onChange } = props;
-  const [image, setImage] = React.useState<Image>();
   const [preview, setPreview] = React.useState("");
   const inputRef = createRef<HTMLInputElement>();
 
@@ -71,7 +70,7 @@ function ProfileUpload(props: Props) {
       width: imageSize,
       height: imageSize,
     };
-    const resized = (await resizeImage(selectedFile, config)) as Blob;
+    const resized = await resizeImage(selectedFile, config);
     const resizedString = await convertToBase64(
       await resizeImage(selectedFile, config)
     );
@@ -79,12 +78,12 @@ function ProfileUpload(props: Props) {
     const data = [...new Uint8Array(await resized.arrayBuffer())];
 
     setPreview(resizedString);
-    setImage({
+    let image = {
       fileName: `profile.${filetype.split("/").pop()}`,
       filetype,
       data,
-    });
-    onChange(resizedString);
+    };
+    onChange(image);
   };
 
   return (
