@@ -13,8 +13,6 @@ function RedirectManager(props: Props) {
   const { isAuthenticated, profile, authClient } = useContext(AppContext);
 
   const isDelegationValid = checkDelegation();
-  console.log("authClient", authClient);
-  console.log("isDelegationValid", isDelegationValid);
 
   // Not ready
   if (!authClient) return null;

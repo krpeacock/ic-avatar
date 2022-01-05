@@ -2,7 +2,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { isDelegationValid } from "@dfinity/authentication";
 import { DelegationChain } from "@dfinity/identity";
 import assert from "assert";
-import { canisterId } from "../../declarations/avatar";
+import { canisterId } from "../../declarations/avatar_assets";
 import { ProfileUpdate, Image } from "../../declarations/avatar/avatar.did";
 
 export function profilesMatch(
@@ -31,7 +31,7 @@ export const getImageString = (
   image: Image,
   authClient: AuthClient
 ): string => {
-  const fileExtension = "." + image?.filetype.split("/").pop();
+  const fileExtension = "." + image?.filetype?.split("/").pop();
 
   let imageString = "";
   if (process.env.NODE_ENV !== "production") {
@@ -40,7 +40,7 @@ export const getImageString = (
       ?.getPrincipal()
       ?.toString()}/profile${fileExtension}?canisterId=${canisterId}`;
   } else {
-    imageString = `https://${canisterId}.raw.ic0.app/images/${authClient
+    imageString = `https://${canisterId}.ic0.app/images/${authClient
       ?.getIdentity()
       ?.getPrincipal()
       ?.toString()}/profile${fileExtension}`;

@@ -1,13 +1,6 @@
 {
   "canisters": {
-    "avatar": {
-      "main": "src/avatar/main.mo",
-      "type": "motoko"
-    },
     "avatar_assets": {
-      "dependencies": [
-        "avatar"
-      ],
       "frontend": {
         "entrypoint": "src/avatar_assets/src/index.html"
       },
@@ -16,6 +9,13 @@
         "dist/avatar_assets/"
       ],
       "type": "assets"
+    },
+    "avatar": {
+      "dependencies": [
+        "avatar_assets"
+      ],
+      "main": "src/avatar/main.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

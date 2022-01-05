@@ -103,8 +103,6 @@ const App = () => {
     setHasInitializedImage(true);
   }, [hasInitializedImage, profile]);
 
-  console.log(activeImage);
-
   useEffect(() => {
     if (history.location.pathname === "/") return;
 

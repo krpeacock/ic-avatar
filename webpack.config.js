@@ -101,6 +101,7 @@ module.exports = {
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
       AVATAR_CANISTER_ID: canisters["avatar"],
+      AVATAR_ASSETS_CANISTER_ID: canisters["avatar_assets"],
       II_URL: isDevelopment
         ? "http://localhost:8000?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai#authorize"
         : "https://identity.ic0.app/#authorize",

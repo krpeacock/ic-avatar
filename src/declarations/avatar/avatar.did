@@ -1,76 +1,3 @@
-type anon_class_25_1 = 
- service {
-   clear: (ClearArguments) -> ();
-   commit_batch: (CommitBatchArguments) -> ();
-   create: (ProfileUpdate) -> (Result);
-   create_asset: (CreateAssetArguments) -> ();
-   create_batch: (record {}) -> (record {batch_id: BatchId;});
-   create_chunk: (record {
-                    batch_id: BatchId;
-                    content: blob;
-                  }) -> (record {chunk_id: ChunkId;});
-   delete: () -> (Result);
-   delete_asset: (DeleteAssetArguments) -> ();
-   get: (record {
-           accept_encodings: vec text;
-           key: Key;
-         }) ->
-    (record {
-       content: blob;
-       content_encoding: text;
-       content_type: text;
-       sha256: opt blob;
-       total_length: nat;
-     }) query;
-   get_chunk:
-    (record {
-       content_encoding: text;
-       index: nat;
-       key: Key;
-       sha256: opt blob;
-     }) -> (record {content: blob;}) query;
-   http_request: (HttpRequest) -> (HttpResponse) query;
-   http_request_streaming_callback: (StreamingCallbackToken) ->
-    (StreamingCallbackHttpResponse) query;
-   list: (record {}) -> (vec AssetDetails) query;
-   read: () -> (Result_1);
-   set_asset_content: (SetAssetContentArguments) -> ();
-   unset_asset_content: (UnsetAssetContentArguments) -> ();
-   update: (ProfileUpdate) -> (Result);
- };
-type UnsetAssetContentArguments = 
- record {
-   content_encoding: text;
-   key: Key;
- };
-type Time = int;
-type StreamingStrategy = variant {
-                           Callback:
-                            record {
-                              callback:
-                               func (StreamingCallbackToken) ->
-                                (StreamingCallbackHttpResponse) query;
-                              token: StreamingCallbackToken;
-                            };};
-type StreamingCallbackToken = 
- record {
-   content_encoding: text;
-   index: nat;
-   key: text;
-   sha256: opt blob;
- };
-type StreamingCallbackHttpResponse = 
- record {
-   body: blob;
-   token: opt StreamingCallbackToken;
- };
-type SetAssetContentArguments = 
- record {
-   chunk_ids: vec ChunkId;
-   content_encoding: text;
-   key: Key;
-   sha256: opt blob;
- };
 type Result_1 = 
  variant {
    err: Error;
@@ -92,31 +19,11 @@ type Profile =
    id: principal;
    image: opt Image;
  };
-type Key = text;
 type Image = 
  record {
    data: blob;
    fileName: text;
    filetype: text;
- };
-type HttpResponse = 
- record {
-   body: blob;
-   headers: vec HeaderField;
-   status_code: nat16;
-   streaming_strategy: opt StreamingStrategy;
- };
-type HttpRequest = 
- record {
-   body: blob;
-   headers: vec HeaderField;
-   method: text;
-   url: text;
- };
-type HeaderField = 
- record {
-   text;
-   text;
  };
 type Error = 
  variant {
@@ -124,19 +31,6 @@ type Error =
    NotAuthorized;
    NotFound;
  };
-type DeleteAssetArguments = record {key: Key;};
-type CreateAssetArguments = 
- record {
-   content_type: text;
-   key: Key;
- };
-type CommitBatchArguments = 
- record {
-   batch_id: BatchId;
-   operations: vec BatchOperationKind;
- };
-type ClearArguments = record {};
-type ChunkId = nat;
 type Bio = 
  record {
    about: opt text;
@@ -146,26 +40,9 @@ type Bio =
    location: opt text;
    name: opt text;
  };
-type BatchOperationKind = 
- variant {
-   Clear: ClearArguments;
-   CreateAsset: CreateAssetArguments;
-   DeleteAsset: DeleteAssetArguments;
-   SetAssetContent: SetAssetContentArguments;
-   UnsetAssetContent: UnsetAssetContentArguments;
- };
-type BatchId = nat;
-type AssetEncodingDetails = 
- record {
-   content_encoding: text;
-   length: nat;
-   modified: Time;
-   sha256: opt blob;
- };
-type AssetDetails = 
- record {
-   content_type: text;
-   encodings: vec AssetEncodingDetails;
-   key: Key;
- };
-service : () -> anon_class_25_1
+service : {
+  create: (ProfileUpdate) -> (Result);
+  delete: () -> (Result);
+  read: () -> (Result_1);
+  update: (ProfileUpdate) -> (Result);
+}
