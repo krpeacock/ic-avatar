@@ -28,7 +28,7 @@ import { ActorSubclass } from "@dfinity/agent";
 import { useEffect } from "react";
 import { remove } from "local-storage";
 import RedirectManager from "./components/RedirectManager";
-import { checkDelegation, profilesMatch } from "./utils";
+import { checkDelegation, getImageString, profilesMatch } from "./utils";
 
 const Header = styled.header`
   position: relative;
@@ -61,16 +61,19 @@ export const AppContext = React.createContext<{
   actor?: ActorSubclass<_SERVICE>;
   profile?: ProfileUpdate;
   updateProfile?: React.Dispatch<ProfileUpdate>;
+  hasLoggedIn: boolean;
+  activeImage: string;
+  setActiveImage: React.Dispatch<string>;
 }>({
   login: () => {},
   logout: () => {},
   profile: emptyProfile,
+  hasLoggedIn: false,
+  activeImage: "",
+  setActiveImage: () => {},
 });
 
 const App = () => {
-  const delegationExpired = checkDelegation();
-  if (delegationExpired) localStorage.clear();
-
   const history = createBrowserHistory();
   const {
     authClient,
@@ -80,20 +83,35 @@ const App = () => {
     login,
     logout,
     actor,
+    hasLoggedIn,
   } = useAuthClient();
   const identity = authClient?.getIdentity();
   const { profile, updateProfile } = useProfile({ identity });
-
-  console.log(identity?.getPrincipal().toText());
+  const [activeImage, setActiveImage] = React.useState("");
+  const [hasInitializedImage, setHasInitializedImage] = React.useState(false);
 
   useEffect(() => {
-    if (delegationExpired) history.replace("/");
+    if (!profile || hasInitializedImage) return;
+    const image = profile?.image[0];
+
+    const imageString =
+      image && authClient ? getImageString(image, authClient) : "";
+
+    if (!imageString) return;
+
+    setActiveImage(imageString);
+    setHasInitializedImage(true);
+  }, [hasInitializedImage, profile]);
+
+  console.log(activeImage);
+
+  useEffect(() => {
     if (history.location.pathname === "/") return;
 
     if (actor) {
-      if (!profile) {
-        toast.loading("Checking the IC for an existing avatar");
-      }
+      // if (!profile) {
+      //   toast.loading("Checking the IC for an existing avatar");
+      // }
       actor.read().then((result) => {
         if (history.location.pathname === "/") return;
         if ("ok" in result) {
@@ -101,7 +119,7 @@ const App = () => {
           if (profilesMatch(profile, result.ok)) {
             return;
           }
-          toast.success("Updated avatar from IC");
+          // toast.success("Updated avatar from IC");
           updateProfile(result.ok);
         } else {
           if ("NotAuthorized" in result.err) {
@@ -121,7 +139,7 @@ const App = () => {
         }
       });
     }
-  }, [actor]);
+  }, [actor, hasLoggedIn]);
 
   if (!authClient) return null;
 
@@ -145,11 +163,14 @@ const App = () => {
             actor,
             profile,
             updateProfile,
+            hasLoggedIn,
+            activeImage,
+            setActiveImage,
           }}
         >
           <Provider theme={defaultTheme}>
             <Router>
-              <RedirectManager />
+              <RedirectManager hasLoggedIn={hasLoggedIn} />
               <Header>
                 <Route path="/manage">
                   <ActionButton id="logout" onPress={logout}>
@@ -189,4 +210,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default React.memo(App);

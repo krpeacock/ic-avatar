@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Loop from "../../assets/loop.svg";
 import { AppContext } from "../App";
+import RedirectManager from "./RedirectManager";
 
 const Section = styled.section`
   width: 100%;
@@ -15,7 +16,7 @@ const Section = styled.section`
 `;
 
 function NotAuthenticated() {
-  const { isAuthenticated, login, profile } = useContext(AppContext);
+  const { hasLoggedIn, login, profile } = useContext(AppContext);
 
   return (
     <Section>
@@ -26,6 +27,7 @@ function NotAuthenticated() {
           <Loop />
         </Icon>
       </Button>
+      {hasLoggedIn ? <RedirectManager hasLoggedIn={hasLoggedIn} /> : null}
     </Section>
   );
 }

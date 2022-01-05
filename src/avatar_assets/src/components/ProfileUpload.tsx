@@ -57,15 +57,9 @@ const Button = styled.button`
 
 function ProfileUpload(props: Props) {
   const { onChange, image } = props;
-  const { authClient } = useContext(AppContext);
+  const { authClient, activeImage, setActiveImage } = useContext(AppContext);
   const [preview, setPreview] = React.useState("");
   const inputRef = createRef<HTMLInputElement>();
-
-  useEffect(() => {
-    if (image && authClient) {
-      setPreview(getImageString(image, authClient));
-    }
-  }, [image, authClient]);
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -86,19 +80,22 @@ function ProfileUpload(props: Props) {
 
     const data = [...new Uint8Array(await resized.arrayBuffer())];
 
-    setPreview(resizedString);
     let image = {
       fileName: `profile.${filetype.split("/").pop()}`,
       filetype,
       data,
     };
+    setActiveImage(resizedString);
+    setPreview(resizedString);
     onChange(image);
   };
+
+  const imgSrc = preview ? preview : activeImage ? activeImage : "";
 
   return (
     <>
       <Button onClick={handleClick} type="button">
-        <picture>{preview ? <img src={preview} /> : <User />}</picture>
+        <picture>{imgSrc ? <img src={imgSrc} /> : <User />}</picture>
         <Camera id="camera-icon" />
         <input
           type="file"

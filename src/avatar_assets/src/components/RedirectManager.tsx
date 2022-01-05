@@ -3,15 +3,24 @@ import { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { AppContext } from "../App";
 import { emptyProfile } from "../hooks";
-import { profilesMatch } from "../utils";
+import { checkDelegation, profilesMatch } from "../utils";
 
-interface Props {}
+interface Props {
+  hasLoggedIn: boolean;
+}
 
 function RedirectManager(props: Props) {
-  const { isAuthenticated, profile } = useContext(AppContext);
+  const { isAuthenticated, profile, authClient } = useContext(AppContext);
+
+  const isDelegationValid = checkDelegation();
+  console.log("authClient", authClient);
+  console.log("isDelegationValid", isDelegationValid);
+
+  // Not ready
+  if (!authClient) return null;
 
   // Logged out
-  if (!isAuthenticated) return <Redirect to="/" />;
+  if (!isDelegationValid) return <Redirect to="/" />;
   // Authenticated but no profile
   if (isAuthenticated && !profile) return <Redirect to="/create" />;
   if (isAuthenticated && profilesMatch(profile, emptyProfile))
@@ -20,4 +29,4 @@ function RedirectManager(props: Props) {
   return <Redirect to="/manage" />;
 }
 
-export default RedirectManager;
+export default React.memo(RedirectManager);

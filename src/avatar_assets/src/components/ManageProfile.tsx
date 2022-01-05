@@ -54,7 +54,14 @@ const ProfileImage = styled.a`
 
 function ManageProfile() {
   const [isEditing, setIsEditing] = React.useState(false);
-  const { actor, profile, authClient, updateProfile } = useContext(AppContext);
+  const {
+    actor,
+    profile,
+    authClient,
+    updateProfile,
+    activeImage,
+    setActiveImage,
+  } = useContext(AppContext);
   const history = useHistory();
 
   const deleteProfile = async () => {
@@ -157,7 +164,7 @@ function ManageProfile() {
             <Grid columns="1fr 1fr" gap="1rem">
               <ProfileImage href={imageString}>
                 <picture id="profile-image">
-                  <img src={imageString} />;
+                  <img src={activeImage} />;
                 </picture>
               </ProfileImage>
               <dd>Name:</dd>

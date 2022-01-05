@@ -243,6 +243,24 @@ shared ({caller = creator}) actor class () {
                     Principal.equal,          // Equality checker
                     null
                 ).0;
+
+                switch(v.image){
+                    case null {};
+                    case (? i){
+                        var fileName = "/images/";
+                        fileName := Text.concat(fileName, Principal.toText(callerId));
+                        fileName := Text.concat(fileName, "/");
+                        fileName := Text.concat(fileName, i.fileName);
+                        let sha256 : ?Blob = null;
+
+                        let deleteResult = delete_asset({key = fileName});
+
+                        let storeResult = await delete_asset({
+                            key = fileName;
+                        });
+                    };
+                };
+
                 #ok(());
             };
         };
