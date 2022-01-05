@@ -11,9 +11,6 @@
       "type": "assets"
     },
     "avatar": {
-      "dependencies": [
-        "avatar_assets"
-      ],
       "main": "src/avatar/main.mo",
       "type": "motoko"
     }

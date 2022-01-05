@@ -29,7 +29,8 @@ export const convertToBase64 = (blob: Blob) => {
 
 export const getImageString = (
   image: Image,
-  authClient: AuthClient
+  authClient: AuthClient,
+  raw = false
 ): string => {
   const fileExtension = "." + image?.filetype?.split("/").pop();
 
@@ -40,7 +41,9 @@ export const getImageString = (
       ?.getPrincipal()
       ?.toString()}/profile${fileExtension}?canisterId=${canisterId}`;
   } else {
-    imageString = `https://${canisterId}.ic0.app/images/${authClient
+    imageString = `https://${canisterId}.${
+      raw ? "raw." : ""
+    }ic0.app/images/${authClient
       ?.getIdentity()
       ?.getPrincipal()
       ?.toString()}/profile${fileExtension}`;

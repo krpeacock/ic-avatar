@@ -12,8 +12,9 @@ import Option "mo:base/Option";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
+import Types "Types";
 
-actor Avatar {
+actor class (avatar_assets: Text) {
     type Bio = {
         givenName: ?Text;
         familyName: ?Text;
@@ -49,7 +50,7 @@ actor Avatar {
         key: Text;
     };
 
-    let AssetCanister = actor("renrk-eyaaa-aaaaa-aaada-cai") : actor {
+    let AssetCanister = actor(avatar_assets) : actor {
         store: ({
             key: Text;
             content_type: Text;

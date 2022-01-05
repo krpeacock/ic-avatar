@@ -138,7 +138,7 @@ function ManageProfile() {
   const image = profile.image[0];
 
   const imageString =
-    image && authClient ? getImageString(image, authClient) : "";
+    image && authClient ? getImageString(image, authClient, true) : "";
 
   return (
     <>

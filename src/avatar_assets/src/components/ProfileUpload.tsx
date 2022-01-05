@@ -5,7 +5,7 @@ import { createRef } from "react";
 import styled from "styled-components";
 import { resizeImage } from "../resize";
 import { Image } from "../../../declarations/avatar/avatar.did";
-import { convertToBase64, getImageString } from "../utils";
+import { convertToBase64 } from "../utils";
 import { AppContext } from "../App";
 
 interface Props {

@@ -25,11 +25,12 @@ export const idlFactory = ({ IDL }) => {
     'image' : IDL.Opt(Image),
   });
   const Result_1 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
-  return IDL.Service({
+  const anon_class_17_1 = IDL.Service({
     'create' : IDL.Func([ProfileUpdate], [Result], []),
     'delete' : IDL.Func([], [Result], []),
     'read' : IDL.Func([], [Result_1], []),
     'update' : IDL.Func([ProfileUpdate], [Result], []),
   });
+  return anon_class_17_1;
 };
-export const init = ({ IDL }) => { return []; };
+export const init = ({ IDL }) => { return [IDL.Text]; };

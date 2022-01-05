@@ -1,3 +1,10 @@
+type anon_class_17_1 = 
+ service {
+   create: (ProfileUpdate) -> (Result);
+   delete: () -> (Result);
+   read: () -> (Result_1);
+   update: (ProfileUpdate) -> (Result);
+ };
 type Result_1 = 
  variant {
    err: Error;
@@ -40,9 +47,4 @@ type Bio =
    location: opt text;
    name: opt text;
  };
-service : {
-  create: (ProfileUpdate) -> (Result);
-  delete: () -> (Result);
-  read: () -> (Result_1);
-  update: (ProfileUpdate) -> (Result);
-}
+service : (text) -> anon_class_17_1

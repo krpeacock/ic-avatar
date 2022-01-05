@@ -93,4 +93,8 @@ module Types {
     body: Blob;
     token: ?StreamingCallbackToken;
   };
+
+  public type AvatarArguments = {
+    avatar_assets: Text;
+};
 };
