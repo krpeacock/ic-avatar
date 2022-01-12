@@ -12,7 +12,8 @@ import Option "mo:base/Option";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Types "Types";
+import Cycles "mo:base/ExperimentalCycles";
+import Types "Types";   
 
 actor class (avatar_assets: Text) {
     type Bio = {
@@ -255,5 +256,9 @@ actor class (avatar_assets: Text) {
     };
     private func keyText(x : Text) : Trie.Key<Text> {
         return { key = x; hash = Text.hash(x) }
+    };
+
+    public query func remaining_cycles() : async Nat {
+        return Cycles.balance()
     };
 }
