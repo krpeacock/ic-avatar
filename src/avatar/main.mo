@@ -126,7 +126,7 @@ actor class (avatar_assets: Text) {
     };
 
     // Read profile
-    public shared(msg) func read () : async Result.Result<Profile, Error> {
+    public shared query (msg) func read () : async Result.Result<Profile, Error> {
         // Get caller principal
         let callerId = msg.caller;
 
