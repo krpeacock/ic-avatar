@@ -1,8 +1,9 @@
-type anon_class_17_1 = 
+type anon_class_18_1 = 
  service {
    create: (ProfileUpdate) -> (Result);
    delete: () -> (Result);
-   read: () -> (Result_1);
+   read: () -> (Result_1) query;
+   remaining_cycles: () -> (nat) query;
    update: (ProfileUpdate) -> (Result);
  };
 type Result_1 = 
@@ -47,4 +48,4 @@ type Bio =
    location: opt text;
    name: opt text;
  };
-service : (text) -> anon_class_17_1
+service : (text) -> anon_class_18_1

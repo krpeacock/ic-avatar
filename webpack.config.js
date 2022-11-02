@@ -103,7 +103,7 @@ module.exports = {
       AVATAR_CANISTER_ID: canisters["avatar"],
       AVATAR_ASSETS_CANISTER_ID: canisters["avatar_assets"],
       II_URL: isDevelopment
-        ? "http://localhost:8000?canisterId=r7inp-6aaaa-aaaaa-aaabq-cai#authorize"
+        ? `http://localhost:8000?canisterId=${canisters["internet-identity"]}#authorize`
         : "https://identity.ic0.app/#authorize",
     }),
     new webpack.ProvidePlugin({

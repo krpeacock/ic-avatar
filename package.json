@@ -30,6 +30,7 @@
     "css-loader": "^6.2.0",
     "events": "3.3.0",
     "html-webpack-plugin": "5.3.1",
+    "isomorphic-fetch": "^3.0.0",
     "process": "0.11.10",
     "stream-browserify": "3.0.0",
     "style-loader": "^3.2.1",
@@ -40,7 +41,8 @@
     "util": "0.12.3",
     "webpack": "5.24.4",
     "webpack-cli": "4.5.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "zx": "^7.1.1"
   },
   "browserslist": [
     "last 2 chrome version",

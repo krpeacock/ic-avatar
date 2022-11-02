@@ -1,4 +1,6 @@
 import type { Principal } from '@dfinity/principal';
+import type { ActorMethod } from '@dfinity/agent';
+
 export interface Bio {
   'familyName' : [] | [string],
   'about' : [] | [string],
@@ -11,7 +13,7 @@ export type Error = { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'AlreadyExists' : null };
 export interface Image {
-  'data' : Array<number>,
+  'data' : Uint8Array,
   'fileName' : string,
   'filetype' : string,
 }
@@ -25,10 +27,11 @@ export type Result = { 'ok' : null } |
   { 'err' : Error };
 export type Result_1 = { 'ok' : Profile } |
   { 'err' : Error };
-export interface anon_class_17_1 {
-  'create' : (arg_0: ProfileUpdate) => Promise<Result>,
-  'delete' : () => Promise<Result>,
-  'read' : () => Promise<Result_1>,
-  'update' : (arg_0: ProfileUpdate) => Promise<Result>,
+export interface anon_class_18_1 {
+  'create' : ActorMethod<[ProfileUpdate], Result>,
+  'delete' : ActorMethod<[], Result>,
+  'read' : ActorMethod<[], Result_1>,
+  'remaining_cycles' : ActorMethod<[], bigint>,
+  'update' : ActorMethod<[ProfileUpdate], Result>,
 }
-export interface _SERVICE extends anon_class_17_1 {}
+export interface _SERVICE extends anon_class_18_1 {}

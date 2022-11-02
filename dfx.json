@@ -13,7 +13,19 @@
     "avatar": {
       "main": "src/avatar/main.mo",
       "type": "motoko"
+    },
+    "internet-identity": {
+      "type": "custom",
+      "wasm": "src/internet-identity/internet-identity.wasm",
+      "build": [],
+      "candid": "src/internet-identity/internet-identity.did",
+      "remote": {
+        "id": {
+          "ic": "fgte5-ciaaa-aaaad-aaatq-cai"
+        }
+      }
     }
+
   },
   "defaults": {
     "build": {

@@ -83,7 +83,7 @@ function ProfileUpload(props: Props) {
     let image = {
       fileName: `profile.${filetype.split("/").pop()}`,
       filetype,
-      data,
+      data: Uint8Array.from(data),
     };
     setActiveImage(resizedString);
     setPreview(resizedString);
