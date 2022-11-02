@@ -9,7 +9,7 @@ type UseAuthClientProps = {};
 export function useAuthClient(props?: UseAuthClientProps) {
   const [authClient, setAuthClient] = useState<AuthClient>();
   const [actor, setActor] = useState<ActorSubclass<_SERVICE>>();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<null | boolean>(null);
   const [hasLoggedIn, setHasLoggedIn] = useState(false);
 
   const login = () => {
@@ -41,10 +41,15 @@ export function useAuthClient(props?: UseAuthClientProps) {
   };
 
   useEffect(() => {
-    AuthClient.create().then(async (client) => {
+    AuthClient.create({
+      idleOptions: {
+        disableDefaultIdleCallback: true,
+        disableIdle: true
+      }
+    }).then(async (client) => {
       const isAuthenticated = await client.isAuthenticated();
       setAuthClient(client);
-      setIsAuthenticated(true);
+      setIsAuthenticated(isAuthenticated);
     });
   }, []);
 

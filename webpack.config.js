@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin')
 
 let localCanisters, prodCanisters, canisters;
 
@@ -37,6 +37,8 @@ initCanisterIds();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 const asset_entry = path.join("src", "avatar_assets", "src", "index.html");
+
+canisters
 
 module.exports = {
   target: "web",
@@ -93,7 +95,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.join(__dirname, "src", "avatar_assets", "assets"),
+          from: path.join(__dirname, "src", "avatar_assets", "src", "assets"),
           to: path.join(__dirname, "dist", "avatar_assets"),
         },
       ],
@@ -103,7 +105,7 @@ module.exports = {
       AVATAR_CANISTER_ID: canisters["avatar"],
       AVATAR_ASSETS_CANISTER_ID: canisters["avatar_assets"],
       II_URL: isDevelopment
-        ? `http://localhost:8000?canisterId=${canisters["internet-identity"]}#authorize`
+        ? `http://localhost:8000?canisterId=${canisters["internet-identity"]['local']}#authorize`
         : "https://identity.ic0.app/#authorize",
     }),
     new webpack.ProvidePlugin({

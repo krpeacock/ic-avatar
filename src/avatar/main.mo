@@ -14,8 +14,9 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Cycles "mo:base/ExperimentalCycles";
 import Types "Types";   
+import AssetCanister "canister:avatar_assets";
 
-actor class (avatar_assets: Text) {
+actor class () {
     type Bio = {
         givenName: ?Text;
         familyName: ?Text;
@@ -49,17 +50,6 @@ actor class (avatar_assets: Text) {
     };
     type DeleteAssetArguments = {
         key: Text;
-    };
-
-    let AssetCanister = actor(avatar_assets) : actor {
-        store: ({
-            key: Text;
-            content_type: Text;
-            content_encoding: Text;
-            content: Blob;
-            sha256: ?Blob;
-        }) -> async ();
-        delete_asset: (DeleteAssetArguments) -> async ();
     };
 
     // Application state
@@ -101,13 +91,13 @@ actor class (avatar_assets: Text) {
                 fileName := Text.concat(fileName, v.fileName);
                 let sha256 : ?Blob = null;
 
-                let storeResult = await AssetCanister.store({
-                    key = fileName;
-                    content_type = v.filetype;
-                    content_encoding = "identity";
-                    content = v.data;
-                    sha256 = sha256;
-                });
+                // let storeResult = await AssetCanister.store({
+                //     key = fileName;
+                //     content_type = v.filetype;
+                //     content_encoding = "identity";
+                //     content = v.data;
+                //     sha256 = sha256;
+                // });
             };
         };
 

@@ -1,12 +1,11 @@
 import { Button, Icon } from "@adobe/react-spectrum";
 import * as React from "react";
-import { useEffect } from "react";
 import { useContext } from "react";
-import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import Loop from "../../assets/loop.svg";
+import Loop from "../assets/loop.svg";
 import { AppContext } from "../App";
 import RedirectManager from "./RedirectManager";
+import { Redirect } from "react-router-dom";
 
 const Section = styled.section`
   width: 100%;
@@ -16,8 +15,10 @@ const Section = styled.section`
 `;
 
 function NotAuthenticated() {
-  const { hasLoggedIn, login, profile } = useContext(AppContext);
+  const { hasLoggedIn, login, isAuthenticated, profile } = useContext(AppContext);
 
+  if(isAuthenticated && profile) return <Redirect to="/manage"/>
+  if(isAuthenticated && !profile) return <Redirect to="/create"/>
   return (
     <Section>
       <h3>You are not authenticated</h3>
@@ -27,7 +28,6 @@ function NotAuthenticated() {
           <Loop />
         </Icon>
       </Button>
-      {hasLoggedIn ? <RedirectManager hasLoggedIn={hasLoggedIn} /> : null}
     </Section>
   );
 }

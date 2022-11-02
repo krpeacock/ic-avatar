@@ -67,23 +67,27 @@ function ProfileUpload(props: Props) {
 
   const handleFile = async (e: any) => {
     const selectedFile = e.target.files[0];
-    const filetype = selectedFile.type;
+    const filetype = "image/jpeg";
+    // const filetype = selectedFile.type;
+    console.log(filetype);
     const config = {
-      quality: 1,
-      width: imageSize,
-      height: imageSize,
-    };
+      maxSizeMB: 0.25,
+      maxWidthOrHeight: 400,
+      useWebWorker: true
+    }
     const resized = await resizeImage(selectedFile, config);
     const resizedString = await convertToBase64(
       await resizeImage(selectedFile, config)
     );
 
-    const data = [...new Uint8Array(await resized.arrayBuffer())];
+    const data = new Uint8Array(await resized.arrayBuffer());
+    console.log(await (await resized.arrayBuffer()).byteLength)
+    // const data = new Uint8Array();
 
     let image = {
       fileName: `profile.${filetype.split("/").pop()}`,
       filetype,
-      data: Uint8Array.from(data),
+      data
     };
     setActiveImage(resizedString);
     setPreview(resizedString);

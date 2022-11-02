@@ -1,9 +1,12 @@
-import { AuthClient } from "@dfinity/auth-client";
+import { AuthClient, IdbStorage } from "@dfinity/auth-client";
 import { isDelegationValid } from "@dfinity/authentication";
 import { DelegationChain } from "@dfinity/identity";
 import assert from "assert";
 import { canisterId } from "../../declarations/avatar_assets";
 import { ProfileUpdate, Image } from "../../declarations/avatar/avatar.did";
+import dfxJson from '../../../dfx.json';
+
+dfxJson.networks.local.bind
 
 export function profilesMatch(
   p1: undefined | ProfileUpdate,
@@ -51,8 +54,8 @@ export const getImageString = (
   return imageString;
 };
 
-export function checkDelegation() {
-  const delegations = localStorage.getItem("ic-delegation");
+export async function checkDelegation() {
+  const delegations = await new IdbStorage().get("ic-delegation");
   if (!delegations) return false;
   const chain = DelegationChain.fromJSON(delegations);
   return isDelegationValid(chain);

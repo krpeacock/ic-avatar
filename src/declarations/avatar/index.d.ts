@@ -8,6 +8,8 @@ export declare interface CreateActorOptions {
   actorOptions?: ActorConfig;
 }
 
+export declare const canisterId: string;
+
 export declare const createActor: (
   canisterId: string | Principal,
   options: CreateActorOptions

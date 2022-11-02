@@ -13,7 +13,7 @@ export type Error = { 'NotFound' : null } |
   { 'NotAuthorized' : null } |
   { 'AlreadyExists' : null };
 export interface Image {
-  'data' : Uint8Array,
+  'data' : Uint8Array | number[],
   'fileName' : string,
   'filetype' : string,
 }

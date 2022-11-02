@@ -13,7 +13,7 @@ import { remove, set } from "local-storage";
 import * as React from "react";
 import { useContext } from "react";
 import toast from "react-hot-toast";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { avatar, canisterId } from "../../../declarations/avatar";
 import {
@@ -60,7 +60,8 @@ function ManageProfile() {
     authClient,
     updateProfile,
     activeImage,
-    setActiveImage,
+    isAuthenticated,
+    logout,
   } = useContext(AppContext);
   const history = useHistory();
 
@@ -125,7 +126,10 @@ function ManageProfile() {
     profile: profile ?? emptyProfile,
   };
 
-  if (!profile) return null;
+  if (isAuthenticated === false || !profile) {
+    logout();
+    return <Redirect to="/"/>
+  }
 
   const { name, displayName, givenName, location, about, familyName } =
     profile.bio;

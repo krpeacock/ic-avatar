@@ -1,18 +1,19 @@
 {
   "canisters": {
     "avatar_assets": {
+      "dependencies": ["internet-identity"],
       "frontend": {
         "entrypoint": "src/avatar_assets/src/index.html"
       },
       "source": [
-        "src/avatar_assets/assets",
         "dist/avatar_assets/"
       ],
       "type": "assets"
     },
     "avatar": {
       "main": "src/avatar/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "dependencies": ["avatar_assets"]
     },
     "internet-identity": {
       "type": "custom",

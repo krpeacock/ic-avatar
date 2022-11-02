@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { emptyProfile } from "../hooks";
 import { useContext } from "react";
 import { AppContext } from "../App";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 const CreateProfile = () => {
   const { setIsAuthenticated, isAuthenticated, actor, profile, updateProfile } =
@@ -49,6 +49,9 @@ const CreateProfile = () => {
       }
     });
   };
+
+  if(isAuthenticated && profile) return <Redirect to="manage"/>
+  if(isAuthenticated === false) return <Redirect to="/"/>
 
   return (
     <ProfileForm

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
       "allowJs": true,
+      "resolveJsonModule": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
       "jsx": "react",

@@ -54,8 +54,8 @@ const Main = styled.main`
 export const AppContext = React.createContext<{
   authClient?: AuthClient;
   setAuthClient?: React.Dispatch<AuthClient>;
-  isAuthenticated?: boolean;
-  setIsAuthenticated?: React.Dispatch<React.SetStateAction<boolean>>;
+  isAuthenticated?: boolean | null;
+  setIsAuthenticated?: React.Dispatch<React.SetStateAction<boolean | null>>;
   login: () => void;
   logout: () => void;
   actor?: ActorSubclass<_SERVICE>;
@@ -168,7 +168,6 @@ const App = () => {
         >
           <Provider theme={defaultTheme}>
             <Router>
-              <RedirectManager hasLoggedIn={hasLoggedIn} />
               <Header>
                 <Route path="/manage">
                   <ActionButton id="logout" onPress={logout}>
